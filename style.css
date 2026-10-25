@@ -1,0 +1,141 @@
+/* Ravex site. System-free: fonts are bundled in assets/fonts, nothing loads from third parties. */
+
+@font-face { font-family: "Bonum"; src: url("assets/fonts/bonum-bold.woff") format("woff"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Inter"; src: url("assets/fonts/inter-regular.woff") format("woff"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Inter"; src: url("assets/fonts/inter-semibold.woff") format("woff"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Inter"; src: url("assets/fonts/inter-extrabold.woff") format("woff"); font-weight: 800; font-display: swap; }
+
+:root {
+  --paper: #f6f4ff;
+  --tint: #ece8ff;
+  --ink: #14103f;
+  --muted: #4a4570;
+  --line: #d6d0f5;
+  --violet: #5b3df5;
+  --deep: #1a1055;
+  --cyan: #22d3ee;
+  --radius: 18px;
+  --gap: 10px;
+  --wrap: 1080px;
+  --serif: "Bonum", "Bookman Old Style", Bookman, Georgia, serif;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1.0625rem/1.65 var(--sans);
+}
+
+img { max-width: 100%; display: block; }
+
+a { color: var(--violet); text-underline-offset: 0.18em; }
+a:hover { color: var(--deep); }
+
+:focus-visible { outline: 3px solid var(--violet); outline-offset: 3px; border-radius: 4px; }
+
+.skip { position: absolute; left: 1rem; top: -4rem; background: var(--ink); color: #fff; padding: 0.6rem 1rem; border-radius: 8px; z-index: 10; }
+.skip:focus { top: 1rem; }
+
+.wrap { width: min(100% - 2rem, var(--wrap)); margin-inline: auto; }
+
+/* Header */
+.site-header { padding-block: 1.25rem; }
+.site-header .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 2rem; }
+.brand img { height: 44px; width: auto; }
+.nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1.5rem; }
+.nav a { color: var(--ink); text-decoration: none; font-weight: 600; font-size: 0.97rem; padding: 0.35rem 0; border-bottom: 2px solid transparent; }
+.nav a:hover { border-bottom-color: var(--line); color: var(--ink); }
+.nav a[aria-current="page"] { border-bottom-color: var(--violet); }
+
+/* Type */
+h1, h2 { font-family: var(--serif); font-weight: 700; line-height: 1.1; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(2.5rem, 6.2vw, 4.25rem); }
+h2 { font-size: clamp(1.6rem, 3.2vw, 2.1rem); }
+h3 { font: 600 1.0625rem/1.4 var(--sans); margin: 0; }
+p { margin: 0 0 1em; }
+
+.lead { font-size: 1.25rem; line-height: 1.55; color: var(--muted); max-width: 34ch; }
+
+/* Hero */
+.hero { padding-block: clamp(2rem, 6vw, 4.5rem) clamp(3rem, 8vw, 6rem); }
+.hero .wrap { display: grid; gap: 3rem; align-items: center; }
+.hero h1 { max-width: 12ch; margin-bottom: 1.25rem; }
+.status { display: flex; align-items: center; gap: 0.65rem; font-weight: 600; margin: 1.75rem 0 0; }
+.status .dot { width: 0.7rem; height: 0.7rem; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.25); }
+
+@media (min-width: 880px) {
+  .hero .wrap { grid-template-columns: 1.05fr 0.95fr; gap: 4rem; }
+}
+
+/* Sliding-tile puzzle that spells RAVEX */
+.play { max-width: 440px; width: 100%; justify-self: center; }
+.board { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap); container-type: inline-size; }
+.slot { aspect-ratio: 1; border: 2px dashed var(--line); border-radius: var(--radius); }
+.tile {
+  position: absolute; top: 0; left: 0;
+  width: calc((100% - 2 * var(--gap)) / 3);
+  aspect-ratio: 1;
+  display: grid; place-items: center;
+  border: 0; border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--violet), var(--deep));
+  color: #fff;
+  font: 800 15cqw/1 var(--sans);
+  letter-spacing: 0.02em;
+  cursor: default;
+  transform: translate(calc(var(--c) * (100% + var(--gap))), calc(var(--r) * (100% + var(--gap))));
+  transition: transform 0.22s cubic-bezier(0.3, 0.7, 0.3, 1), box-shadow 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.tile[data-letter="X"] { background: var(--cyan); color: var(--ink); }
+.tile.is-movable { cursor: pointer; box-shadow: 0 6px 0 rgba(20, 16, 63, 0.18); }
+.tile.is-movable:hover { box-shadow: 0 8px 0 rgba(20, 16, 63, 0.22); }
+.board.is-shuffling .tile { transition-duration: 0.08s; }
+
+.play-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin-top: 1.25rem; }
+.play-bar p { margin: 0; color: var(--muted); font-size: 0.97rem; flex: 1 1 14rem; }
+.btn { font: 600 0.97rem/1 var(--sans); color: var(--ink); background: transparent; border: 2px solid var(--ink); border-radius: 999px; padding: 0.7rem 1.2rem; cursor: pointer; }
+.btn:hover { background: var(--ink); color: #fff; }
+
+/* Content sections */
+.section { padding-block: clamp(2.5rem, 6vw, 4.5rem); }
+.split { display: grid; gap: 1.25rem 4rem; }
+@media (min-width: 880px) { .split { grid-template-columns: 1fr 2fr; } }
+
+.facts { margin: 0; display: grid; gap: 1.25rem; }
+.facts dt { font-weight: 600; }
+.facts dd { margin: 0.1rem 0 0; color: var(--muted); }
+
+.prose { max-width: 62ch; }
+.prose p { color: var(--ink); }
+.prose h2 { margin: 2.5rem 0 0.75rem; }
+.prose h2:first-child { margin-top: 0; }
+.prose ul { padding-left: 1.2rem; }
+
+/* Values band */
+.band { background: var(--tint); }
+.values { display: grid; gap: 1.75rem 3rem; margin: 0; padding: 0; list-style: none; }
+@media (min-width: 700px) { .values { grid-template-columns: 1fr 1fr; } }
+.values p { margin: 0.2rem 0 0; color: var(--muted); }
+
+/* Page header for inner pages */
+.page-head { padding-block: clamp(2rem, 5vw, 3.5rem) 0.5rem; }
+.page-head p { color: var(--muted); margin: 0.75rem 0 0; }
+
+/* Footer */
+.site-footer { background: var(--ink); color: #e9e6ff; margin-top: clamp(2rem, 6vw, 4rem); padding-block: 2.5rem; font-size: 0.97rem; }
+.site-footer a { color: #fff; }
+.site-footer .wrap { display: grid; gap: 1rem; }
+.site-footer p { margin: 0; max-width: 60ch; }
+.site-footer .nav a { color: #fff; font-size: 0.97rem; }
+.site-footer .nav a:hover { border-bottom-color: rgba(255, 255, 255, 0.4); color: #fff; }
+.site-footer .nav a[aria-current="page"] { border-bottom-color: var(--cyan); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tile, .board.is-shuffling .tile { transition: none; }
+}
